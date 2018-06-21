@@ -7,14 +7,27 @@ const walk = require('babylon-walk');
 const babylon = require('babylon');
 const t = require('babel-types');
 
-const prelude = fs
-  .readFileSync(path.join(__dirname, '../builtins/prelude2.min.js'), 'utf8')
-  .trim()
-  .replace(/;$/, '');
-const helpers =
-  fs
-    .readFileSync(path.join(__dirname, '../builtins/helpers.js'), 'utf8')
-    .trim() + '\n';
+const prelude = {};
+const preludePath = path.join(__dirname, '../builtins/prelude2.js');
+prelude.minified = prelude.source = fs.readFileSync(preludePath, 'utf8').trim();
+const preludeMinPath = path.join(__dirname, '../builtins/prelude2.min.js');
+if (fs.existsSync(preludeMinPath)) {
+  prelude.minified = fs
+    .readFileSync(preludeMinPath, 'utf8')
+    .trim()
+    .replace(/;$/, '');
+}
+
+const helpers = {};
+const helpersPath = path.join(__dirname, '../builtins/helpers.js');
+helpers.minified = helpers.source = fs.readFileSync(helpersPath, 'utf8').trim();
+const helpersMinPath = path.join(__dirname, '../builtins/helpers.min.js');
+if (fs.existsSync(helpersMinPath)) {
+  helpers.minified = fs
+    .readFileSync(helpersMinPath, 'utf8')
+    .trim()
+    .replace(/;$/, '');
+}
 
 class JSConcatPackager extends Packager {
   async start() {
