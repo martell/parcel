@@ -1,27 +1,15 @@
 const Packager = require('./Packager');
 const path = require('path');
-const fs = require('fs');
 const concat = require('../scope-hoisting/concat');
 const urlJoin = require('../utils/urlJoin');
+const getExisting = require('../utils/getExisting');
 const walk = require('babylon-walk');
 const babylon = require('babylon');
 const t = require('babel-types');
 const {getName, getIdentifier} = require('../scope-hoisting/utils');
 
-const prelude = {
-  source: fs
-    .readFileSync(path.join(__dirname, '../builtins/prelude2.js'), 'utf8')
-    .trim(),
-  minified: fs
-    .readFileSync(path.join(__dirname, '../builtins/prelude2.min.js'), 'utf8')
-    .trim()
-    .replace(/;$/, '')
-};
-
-const helpers =
-  fs
-    .readFileSync(path.join(__dirname, '../builtins/helpers.js'), 'utf8')
-    .trim() + '\n';
+const prelude = getExisting(path.join(__dirname, '../builtins/prelude2'));
+const helpers = getExisting(path.join(__dirname, '../builtins/helpers'));
 
 class JSConcatPackager extends Packager {
   async start() {
